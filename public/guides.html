@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guides</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .search {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search input {
+            padding: 10px;
+            width: 60%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search button {
+            padding: 10px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search button:hover {
+            background-color: #555;
+        }
+        .place {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .guide {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .guide:last-child {
+            border-bottom: none;
+        }
+        .guide h2 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        .guide p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guides</h1>
+        <div class="search">
+            <input type="text" id="searchInput" placeholder="Search for a place...">
+            <button onclick="searchPlaces()">Search</button>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        let guideData = {};
+
+        async function fetchGuideData() {
+            try {
+                const response = await fetch('guides.json');
+                guideData = await response.json();
+                displayGuideData(guideData);
+            } catch (error) {
+                console.error('Error fetching the guide data:', error);
+            }
+        }
+
+        function displayGuideData(data) {
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = '';
+            const places = Object.keys(data);
+
+            places.forEach(place => {
+                const placeDiv = document.createElement('div');
+                placeDiv.className = 'place';
+                
+                const placeTitle = document.createElement('h2');
+                placeTitle.textContent = place;
+                placeDiv.appendChild(placeTitle);
+
+                data[place].forEach(guide => {
+                    const guideDiv = document.createElement('div');
+                    guideDiv.className = 'guide';
+
+                    guideDiv.innerHTML = `
+                        <h3>${guide.name}</h3>
+                        <p><strong>Language:</strong> ${guide.language}</p>
+                        <p><strong>Cost:</strong> $${guide.cost}</p>
+                        <p><strong>Phone:</strong> ${guide.phone_no}</p>
+                        <p><strong>Email:</strong> <a href="mailto:${guide.email}">${guide.email}</a></p>
+                        <button onclick='bookGuide("${guide.name}", ${guide.cost})'>Book here</button>
+                    `;
+
+                    placeDiv.appendChild(guideDiv);
+                });
+
+                contentDiv.appendChild(placeDiv);
+            });
+        }
+
+        function searchPlaces() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = {};
+
+            Object.keys(guideData).forEach(place => {
+                if (place.toLowerCase().includes(searchInput)) {
+                    filteredData[place] = guideData[place];
+                }
+            });
+
+            displayGuideData(filteredData);
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                searchPlaces();
+            }
+            document.getElementById('searchInput').addEventListener('input', (event) => {
+                searchPlaces();
+            });
+            
+        });
+        
+        function bookGuide(guideName, cost) {
+            
+            const recipientNumber = prompt("Please enter the recipient's 10-digit phone number:");
+            
+           
+         
+            if (!recipientNumber) {
+                alert("Invalid phone number. Please enter a valid 10-digit number.");
+                return;
+            }
+            
+           
+            const qrCodeImageUrl = "https://drive.google.com/uc?id=1Ale0n9cvHNwvDeilELgjpWA8qH38Yp0n"; // Use your direct link here
+        
+          
+            const message = `I would like to book the guide ${guideName}. The cost is $${cost}. Please find the QR code for PhonePe payment below:\n\n${qrCodeImageUrl}\n\nPlease download and scan the QR code to complete the payment.`;
+            
+           
+            const encodedMessage = encodeURIComponent(message);
+            
+           
+            const whatsappUrl = `https://wa.me/91${recipientNumber}?text=${encodedMessage}`;
+            
+            
+            console.log('WhatsApp URL:', whatsappUrl);    
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        
+        fetchGuideData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Cost</title>
+   <style>
+    /* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.cost {
+    font-size: 2em;
+    font-weight: bold;
+    color: #4CAF50;
+    margin: 20px 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007BFF;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+   </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Total Cost</h1>
+        <div class="cost">
+            <p id="total-cost">$0.00</p>
+        </div>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+    <script>
+        // JavaScript to insert the total cost into the HTML
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const totalCost = urlParams.get('totalCost');
+            if (totalCost) {
+                document.getElementById('total-cost').textContent = `$${totalCost}`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+#navbar {
+    height: 80px;
+    display: flex;
+    gap:80px;
+    align-items: center;
+    background-color: rgba(0, 51, 102, 0.7);
+    padding: 0 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#logo img {
+    height: 50px; 
+    width: auto;
+    border-radius: 20px;
+}
+
+#navbar a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+    transition: color 0.3s;
+}
+
+#navbar a:hover {
+    color: #ff6347; 
+}
+
+#image {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+#image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#position {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2f3542;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    z-index: 500; /* Ensure the text is above the background image */
+}
+
+.animated-text {
+    font-size: 34px;
+    font-weight: 600;
+    min-width: 280px;
+}
+
+.animated-text span {
+    position: relative;
+}
+
+.animated-text span::before {
+    content: "Tourism";
+    color: #ff7f50;
+    animation: words 20s infinite;
+}
+
+.animated-text span::after {
+    content: "";
+    position: absolute;
+    width: calc(100% + 8px);
+    height: 100%;
+    background-color: #2f3542;
+    border-left: 2px solid #ff7f50;
+    right: -8px;
+    animation: cursor .8s infinite, typing 20s steps(14) infinite;
+}
+
+@keyframes cursor {
+    to {
+        border-left: 2px solid #ff7f5000;
+    }
+}
+
+@keyframes words {
+    0%, 20% {
+        content: "Tourism";
+    }
+    21%,40% {
+        content: "Family";
+    }
+    41%,60% {
+        content: "Adventure";
+    }
+    61%,80% {
+        content: "Explore";
+    }
+    81%,100% {
+        content: "Culture";
+    }
+   
+}
+
+@keyframes typing {
+    10%, 15%, 30%, 35%, 50%, 55%, 70%, 75%, 90%, 95% {
+        width: 0;
+    }
+    5%, 20%, 25%, 40%, 45%, 60%, 65%, 80%, 85% {
+        width: calc(100% + 8px);
+    }
+}
+#top-places {
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#top-places h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.places {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    padding: 10px 0;
+}
+
+.place-box {
+    display: inline-block;
+    width: 300px;
+    height: 400px;
+    margin: 0 10px;
+    border-radius: 10px;
+    background: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    text-align: left;
+}
+
+.place-box:hover {
+    transform: scale(1.05);
+}
+
+.place-box img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.place-box h3 {
+    font-size: 1.5em;
+    margin: 10px;
+}
+
+.place-box p {
+    font-size: 1em;
+    margin: 5px 10px;
+    color: #555;
+}
+
+

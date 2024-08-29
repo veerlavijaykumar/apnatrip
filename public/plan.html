@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Booking Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family:serif;
+            font-size: 20px;
+            background: url('./tour2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ffffff;
+        }
+
+        #box {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+           
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+           
+           color:white;
+           
+            margin-bottom: 5px;
+            font-size: 35px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #A3D5D3;
+            border-radius: 6px;
+          
+            
+            font-size: 16px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #00FFFF;
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        input[type="submit"] {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #00FFFF;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 18px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00CED1;
+            transform: scale(1.05);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <form action="/payment" method="POST">
+            <div>
+                <label for="fullName">Full Name</label>
+                <input type="text" name="fullName" id="fullName" required placeholder="Enter your full name">
+            </div>
+            <div>
+                <label for="destination">Destination (City/Country)</label>
+                <input type="text" name="destination" id="destination" required placeholder="Enter your destination">
+            </div>
+            <div>
+                <label for="departureDate">Departure Date</label>
+                <input type="date" name="departureDate" id="departureDate" required>
+            </div>
+            <div>
+                <label for="returnDate">Return Date (if applicable)</label>
+                <input type="date" name="returnDate" id="returnDate">
+            </div>
+            <div>
+                <label for="numberOfTravelers">Number of Travelers</label>
+                <input type="number" name="count" id="numberOfTravelers" min="1" required placeholder="Enter number of travelers">
+            </div>
+            <div>
+                <label for="accommodationPreferences">Accommodation Preferences</label>
+                <select name="accommodationPreferences" id="accommodationPreferences">
+                    <option value="hotel">Hotel</option>
+                    <option value="hostel">Hostel</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="bnb">Bed and Breakfast</option>
+                </select>
+            </div>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</body>
+</html>

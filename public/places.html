@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details Viewer</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to bottom right, #f5f5f5, #e0e0e0);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-section, .category-buttons {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .search-section input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 60%;
+        }
+        .search-section button, .category-buttons button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+        .search-section button:hover, .category-buttons button:hover {
+            background: #0056b3;
+        }
+        #photo-container img {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        #details-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+        .nearby-place {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .nearby-place img {
+            border-bottom: 1px solid #ddd;
+        }
+        .nearby-place:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .category-heading {
+            font-size: 2em;
+            margin: 20px 0;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .grid-container img {
+            width: 100%;
+            height: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        #photo-container, #details-container, #nearby-container {
+            animation: fadeIn 1s ease-in-out;
+        }
+        #photo-map
+        {
+            display:flex;
+            gap:100px;
+        }
+        #map
+        {
+            width:800px;
+            height:400px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Place Details</h1>
+    </header>
+    <div class="container">
+        <div class="search-section">
+            <input type="text" id="place-input" placeholder="Enter a place name">
+            <button onclick="searchPlace()">Search</button>
+        </div>
+        <div class="category-buttons">
+           
+            <button onclick="fetchNearbyPlaces('restaurant')">Restaurants</button>
+            <button onclick="fetchNearbyPlaces('museum')">Museums</button>
+            <button onclick="fetchNearbyPlaces('historical_place')">Historical Places</button>
+            <button onclick="fetchNearbyPlaces('cafe')">Cafes</button>
+        </div>
+        <div id="photo-map">
+        <div id="photo-container">
+            <p>Loading photo...</p>
+        </div>
+        <div id="map"></div>
+        </div>
+        <div id="details-container">
+            <p>Loading details...</p>
+        </div>
+        <div id="nearby-container">
+            <p>Loading nearby places...</p>
+        </div>
+    </div>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3X_zPual5zlhz9BTgXZNgYmBanJdPb4Y&callback=initMap&v=weekly"
+    defer
+  ></script>
+    <script>
+        let map, geocoder;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 40.731, lng: -73.997 },
+                zoom: 8
+            });
+            geocoder = new google.maps.Geocoder();
+        }
+
+        function geocodePlace(place) {
+            if (!geocoder) {
+                console.error('Geocoder is not initialized.');
+                return;
+            }
+
+            geocoder.geocode({ address: place }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    map.setZoom(12);
+                    map.setCenter(location);
+
+                    new google.maps.Marker({
+                        position: location,
+                        map: map
+                    });
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: results[0].formatted_address
+                    });
+
+                    infowindow.open(map, new google.maps.Marker({
+                        position: location,
+                        map: map
+                    }));
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        }
+        async function searchPlace() {
+            const placeName = document.getElementById('place-input').value;
+            if (!placeName) {
+                alert('Please enter a place name.');
+                return;
+            }
+           
+            try {
+                geocodePlace(placeName);
+                const response = await fetch(`/get-place-data?placeName=${encodeURIComponent(placeName)}&category=all`);
+                const data = await response.json();
+                displayPlaceData(data);
+            } catch (error) {
+                console.error('Error fetching place data:', error);
+                document.getElementById('details-container').innerHTML = '<p>Failed to load details.</p>';
+                document.getElementById('nearby-container').innerHTML = '<p>Failed to load nearby places.</p>';
+            }
+        }
+
+        async function fetchNearbyPlaces(category) {
+            const placeName = document.getElementById('place-input').value;
+            if (!placeName) {
+                alert('Please enter a place name.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/get-place-data?placeName=${encodeURIComponent(placeName)}&category=${category}`);
+                const data = await response.json();
+                displayPlaceData(data);
+            } catch (error) {
+                console.error('Error fetching place data:', error);
+                document.getElementById('details-container').innerHTML = '<p>Failed to load details.</p>';
+                document.getElementById('nearby-container').innerHTML = '<p>Failed to load nearby places.</p>';
+            }
+        }
+
+        function displayPlaceData(data) {
+            const photoContainer = document.getElementById('photo-container');
+            if (data.photoUrl) {
+                photoContainer.innerHTML = `<img src="${data.photoUrl}" alt="Place Photo">`;
+            } else {
+                photoContainer.innerHTML = '<p>No photo found.</p>';
+            }
+
+            const detailsContainer = document.getElementById('details-container');
+            if (data.placeDetails) {
+                detailsContainer.innerHTML = `
+                    <h2>${data.placeDetails.name || 'N/A'}</h2>
+                    <p><strong>Address:</strong> ${data.placeDetails.formatted_address || 'No address available'}</p>
+                    <p><strong>Phone:</strong> ${data.placeDetails.international_phone_number || 'N/A'}</p>
+                    <p><strong>Website:</strong> <a href="${data.placeDetails.website || '#'}" target="_blank">${data.placeDetails.website || 'N/A'}</a></p>
+                    <p><strong>Rating:</strong> ${data.placeDetails.rating || 'N/A'} (${data.placeDetails.user_ratings_total || '0'} ratings)</p>
+                    <h3>Location Coordinates:</h3>
+                    <p>Latitude: ${data.location.lat || 'N/A'}, Longitude: ${data.location.lng || 'N/A'}</p>
+                `;
+            } else {
+                detailsContainer.innerHTML = '<p>No details found.</p>';
+            }
+
+            const nearbyContainer = document.getElementById('nearby-container');
+            if (data.nearbyPlaces.length > 0) {
+                nearbyContainer.innerHTML = '';
+                data.nearbyPlaces.forEach(category => {
+                    nearbyContainer.innerHTML += `<div class="category-heading">${category.type.charAt(0).toUpperCase() + category.type.slice(1)}</div>`;
+                    if (category.places.length > 0) {
+                        nearbyContainer.innerHTML += '<div class="grid-container">';
+                        category.places.forEach(place => {
+                            const distance = (Math.random() * 10).toFixed(2); // Random distance between 0 and 10 km
+                            const price = '$' + (Math.floor(Math.random() * 100) + 10); // Dummy price
+                            nearbyContainer.innerHTML += `
+                                <div class="nearby-place">
+                                    ${place.photoUrl ? `<img src="${place.photoUrl}" alt="${place.name} Photo">` : '<img src="default-image.jpg" alt="Default Photo" width="400px" height="400px">'}
+                                    <h3>${place.name || 'N/A'}</h3>
+                                    <p>${place.vicinity || 'No address available'}</p>
+                                    <p><strong>Distance:</strong> ${distance} km</p>
+                                    <p><strong>Price:</strong> ${price}</p>
+                                </div>
+                            `;
+                        });
+                        nearbyContainer.innerHTML += '</div>';
+                    } else {
+                        nearbyContainer.innerHTML += '<p>No nearby places found.</p>';
+                    }
+                });
+            } else {
+                nearbyContainer.innerHTML = '<p>No nearby places found.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

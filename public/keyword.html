@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devotional Places</title>
+    <style>
+        /* Basic styles */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 60px; /* Adjusted for navbar height */
+            background-image: url('https://static.vecteezy.com/system/resources/previews/003/559/330/original/abstract-background-with-gradient-blue-bubble-free-vector.jpg'); /* Light background color */
+        }
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* Height of the navbar */
+            background: linear-gradient(90deg, #8842f1, #c03af8);
+            display: flex;
+            justify-content:space-around;
+            border-radius: 8px;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensures the navbar is above other content */
+        }
+        #navbar img
+        {
+            width:60px;
+            height:50px;
+            border-radius: 20px;
+        }
+        #navbar button {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 25px;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 0 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        #navbar button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        #places-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .place-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .place-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+        }
+        .place-card h3 {
+            margin: 10px;
+            font-size: 18px;
+        }
+        .place-card p {
+            margin: 0 10px 10px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <a href='keyword.html'><img src="./world-tour.webp" class="logo"></a>
+        <button onclick="devotional()">#Devotional</button>
+        <button onclick="adventure()">#Adventure</button>
+        <button onclick="historic()">#Historic</button>
+        <button onclick="chill()">#Chill</button>
+    </div>
+    <br>
+    <div id="places-container"></div>
+
+    <script>
+    
+        function devotional() {
+            fetch('places-key.json')
+                .then(response => response.json())
+                .then(data => displayPlaces(data.devotional))
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        function adventure() {
+            fetch('places-key.json')
+                .then(response => response.json())
+                .then(data => displayPlaces(data.adventure))
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        function historic() {
+            fetch('places-key.json')
+                .then(response => response.json())
+                .then(data => displayPlaces(data.historic))
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        function chill() {
+            fetch('places-key.json')
+                .then(response => response.json())
+                .then(data => displayPlaces(data.chill))
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        
+        function displayPlaces(places) {
+            const container = document.getElementById('places-container');
+            container.innerHTML = '';
+        
+            places.forEach(place => {
+                const placeCard = document.createElement('div');
+                placeCard.className = 'place-card';
+        
+                const img = document.createElement('img');
+                img.src = place.photo_url;
+                img.alt = place.name;
+        
+                const title = document.createElement('h3');
+                title.textContent = place.name;
+        
+                const location = document.createElement('p');
+                location.textContent = place.location;
+        
+                placeCard.appendChild(img);
+                placeCard.appendChild(title);
+                placeCard.appendChild(location);
+        
+                container.appendChild(placeCard);
+            });
+        }
+    </script>
+</body>
+</html>
